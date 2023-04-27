@@ -1,10 +1,12 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
 /**
 * ////-License-Identifier: MIT
 *
 * Copyright (c) 2016-2019 zOS Global Limited
 *
 */
-pragma solidity ^0.8.0;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP. Does not include
@@ -90,6 +92,47 @@ interface IERC20 {
      * a call to `approve`. `value` is the new allowance.
      */
     event Approval(address indexed owner, address indexed spender, uint256 value);
+
+}
+
+interface IReserve is IERC20 {
+   function checkQualified(address sender, address[] calldata helpers) external view;
+}
+
+interface IFrankencoin is IERC20 {
+
+    function suggestMinter(address _minter, uint256 _applicationPeriod, 
+      uint256 _applicationFee, string calldata _message) external;
+
+    function registerPosition(address position) external;
+
+    function denyMinter(address minter, address[] calldata helpers, string calldata message) external;
+
+    function reserve() external view returns (IReserve);
+
+    function minterReserve() external view returns (uint256);
+
+    function calculateAssignedReserve(uint256 mintedAmount, uint32 _reservePPM) external view returns (uint256);
+
+    function equity() external view returns (uint256);
+
+    function isMinter(address minter) external view returns (bool);
+
+    function isPosition(address position) external view returns (address);
+    
+    function mint(address target, uint256 amount) external;
+
+    function mint(address target, uint256 amount, uint32 reservePPM, uint32 feePPM) external;
+
+    function burn(uint256 amountIncludingReserve, uint32 reservePPM) external;
+
+    function burnFrom(address payer, uint256 targetTotalBurnAmount, uint32 _reservePPM) external returns (uint256);
+
+    function burnWithReserve(uint256 amountExcludingReserve, uint32 reservePPM) external returns (uint256);
+
+    function burn(address target, uint256 amount) external;
+
+    function notifyLoss(uint256 amount) external;
 
 }
 
